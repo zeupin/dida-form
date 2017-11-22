@@ -9,7 +9,7 @@
 
 namespace Dida\Form;
 
-class Text extends FormControl
+class File extends FormControl
 {
     const VERSION = '20171120';
 
@@ -25,16 +25,12 @@ class Text extends FormControl
 
     protected function newInputZone()
     {
-        $this->inputZone->setTag('input', 'type="text"');
+        $this->inputZone->setTag('input', 'type="file"');
     }
 
 
     protected function beforeBuild()
     {
-        if (isset($this->data)) {
-            $value = $this->data;
-            $this->refInputZone()->setProp('value', htmlspecialchars($value));
-        }
     }
 
 

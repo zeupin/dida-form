@@ -11,28 +11,27 @@ namespace Dida\Form;
 
 class Button extends FormControl
 {
-    const VERSION = '20171118';
+    const VERSION = '20171120';
 
-    protected $value = null;
+
+    use BeforeBuildTrait;
+
+
+    protected function newCaptionZone()
+    {
+    }
+
+
+    protected function newInputZone()
+    {
+        $this->inputZone->setTag('button', 'type="button"');
+    }
 
 
     public function build()
     {
-        $output = [];
+        $this->beforeBuildButton();
 
-        $output[] = '<button type="button"';
-        $output[] = $this->props->build();
-        if (isset($this->valueHtml)) {
-            $output[] = ' value="' . $this->valueHtml . '"';
-        }
-        $output[] = '>';
-
-        if (isset($this->label)) {
-            $output[] = $this->label;
-        }
-
-        $output[] = "</button>";
-
-        return implode('', $output);
+        return parent::build();
     }
 }

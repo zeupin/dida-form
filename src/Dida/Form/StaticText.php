@@ -11,18 +11,39 @@ namespace Dida\Form;
 
 class StaticText extends FormControl
 {
-    const VERSION = '20171117';
+    const VERSION = '20171120';
+
+
+    protected function newCaptionZone()
+    {
+        $this->captionZone->setTag('div');
+    }
+
+
+    protected function newInputZone()
+    {
+        $this->inputZone->setTag('div');
+    }
+
+
+    protected function beforeBuild()
+    {
+        if (isset($this->bag['caption'])) {
+            $caption = $this->bag['caption'];
+            $this->refCaptionZone()->setInnerHTML($caption);
+        }
+
+        if (isset($this->data)) {
+            $value = $this->data;
+            $this->refInputZone()->setInnerHTML(htmlspecialchars($value));
+        }
+    }
+
 
     public function build()
     {
-        $output = [];
+        $this->beforeBuild();
 
-        if ($this->label) {
-            $output[] = "<label>{$this->label}</label>";
-        }
-
-        $output[] = $this->valueHtml;
-
-        return implode('', $output);
+        return parent::build();
     }
 }

@@ -11,28 +11,50 @@ namespace Dida\Form;
 
 abstract class FormControl
 {
-    const VERSION = '20171118';
+    const VERSION = '20171121';
+
+    const TEXT = 'text';
+    const HTML = 'html';
+
+    protected $data = null;
+
+    protected $bag = [];
 
     protected $form = null;
 
-    protected $props = null;
+    protected $controlZone = null;
 
-    protected $label = null;
+    protected $captionZone = null;
 
-    protected $value = null;
+    protected $inputZone = null;
 
-    protected $valueHtml = null;
+    protected $helpZone = null;
+
+    protected $messageZone = null;
 
 
-    abstract public function build();
+    abstract protected function newCaptionZone();
 
 
-    public function __construct($name = null, $id = null)
+    abstract protected function newInputZone();
+
+
+    public function __construct($name = null, $data = null, $caption = null, $id = null)
     {
-        $this->props = new PropertySet([
-            'id'   => $id,
-            'name' => $name,
-        ]);
+        if (!is_null($name)) {
+            $this->setName($name);
+        }
+        if (!is_null($data)) {
+            $this->setData($data);
+        }
+        if (!is_null($caption)) {
+            $this->setCaption($caption);
+        }
+        if (!is_null($id)) {
+            $this->setID($id);
+        }
+
+        return $this;
     }
 
 
@@ -44,60 +66,88 @@ abstract class FormControl
     }
 
 
-    public function setProp($name, $value)
+    public function &refControlZone()
     {
-        $this->props->set($name, $value);
+        if (!$this->controlZone) {
+            $this->controlZone = new \Dida\Html\ActiveElement();
+        }
+        return $this->controlZone;
+    }
+
+
+    public function &refCaptionZone()
+    {
+        if (!$this->captionZone) {
+            $this->captionZone = new \Dida\Html\ActiveElement();
+            $this->newCaptionZone();
+        }
+        return $this->captionZone;
+    }
+
+
+    public function &refInputZone()
+    {
+        if (!$this->inputZone) {
+            $this->inputZone = new \Dida\Html\ActiveElement();
+            $this->newInputZone();
+        }
+        return $this->inputZone;
+    }
+
+
+    public function &refHelpZone()
+    {
+        if (!$this->helpZone) {
+            $this->helpZone = new \Dida\Html\ActiveElement();
+        }
+        return $this->helpZone;
+    }
+
+
+    public function &refMessageZone()
+    {
+        if (!$this->messageZone) {
+            $this->messageZone = new \Dida\Html\ActiveElement();
+        }
+        return $this->messageZone;
+    }
+
+
+    public function setName($name)
+    {
+        $this->bag['name'] = $name;
         return $this;
     }
 
 
-    public function getProp($name)
+    public function setData($data)
     {
-        return $this->props->get($name);
-    }
-
-
-    public function addClass($class)
-    {
-        $this->props->addClass($class);
+        $this->data = $data;
         return $this;
     }
 
 
-    public function removeClass($class)
+    public function setCaption($caption, $type = self::TEXT)
     {
-        $this->props->removeClass($class);
-        return $this;
-    }
-
-
-    public function addStyle($style)
-    {
-        $this->props->addStyle($style);
-        return $this;
-    }
-
-
-    public function value($value)
-    {
-        if (is_null($value)) {
-            $this->value = null;
-            $this->valueHtml = null;
+        if (is_null($caption)) {
+            $this->bag['caption'] = $caption;
             return $this;
         }
 
-        if (!is_string($value)) {
-            $value = strval($value);
+        switch ($type) {
+            case self::TEXT:
+                $caption = htmlspecialchars($caption);
+                $caption = nl2br($caption);
+                break;
         }
-        $this->value = $value;
-        $this->valueHtml = htmlspecialchars($value);
+        $this->bag['caption'] = $caption;
         return $this;
     }
 
 
-    public function label($label)
+    public function setID($id = null)
     {
-        $this->label = htmlspecialchars($label);
+        $this->bag['id'] = $id;
         return $this;
     }
 
@@ -105,32 +155,11 @@ abstract class FormControl
     public function required($bool = true)
     {
         if ($bool) {
-            $this->props->set('required', true);
+            $this->bag['required'] = true;
         } else {
-            $this->props->remove('required');
+            unset($this->bag['required']);
         }
-        return $this;
-    }
 
-
-    public function disabled($bool = true)
-    {
-        if ($bool) {
-            $this->props->set('disabled', true);
-        } else {
-            $this->props->remove('disabled');
-        }
-        return $this;
-    }
-
-
-    public function readonly($bool = true)
-    {
-        if ($bool) {
-            $this->props->set('readonly', true);
-        } else {
-            $this->props->remove('readonly');
-        }
         return $this;
     }
 
@@ -138,5 +167,27 @@ abstract class FormControl
     public function done()
     {
         return $this->form;
+    }
+
+
+    public function build()
+    {
+        $output = [];
+        if ($this->captionZone) {
+            $output[] = $this->captionZone->build();
+        }
+        if ($this->inputZone) {
+            $output[] = $this->inputZone->build();
+        }
+        if ($this->helpZone) {
+            $output[] = $this->helpZone->build();
+        }
+        if ($this->messageZone) {
+            $output[] = $this->messageZone->build();
+        }
+
+        $control = $this->refControlZone();
+        $control->setInnerHTML(implode('', $output));
+        return $control->build();
     }
 }

@@ -9,13 +9,12 @@
 
 namespace Dida\Form;
 
-class RadioGroup extends FormControl
+class CheckboxGroup extends FormControl
 {
     const VERSION = '20171120';
 
-    use \Dida\Form\OptionSetTrait;
 
-    use BeforeBuildTrait;
+    use \Dida\Form\OptionSetTrait;
 
 
     protected function newCaptionZone()
@@ -41,18 +40,16 @@ class RadioGroup extends FormControl
             $this->refCaptionZone()->addChild()->setInnerHTML(' *');
         }
 
-        if (is_scalar($this->data)) {
-            $this->options->check([$this->data]);
-        }
+        $this->check($this->data);
 
         $options = $this->options->getAll();
 
         $name = $this->bag['name'];
-        foreach ($options as $option) {
+        foreach ($options as $index => $option) {
             $this->refInputZone()
                 ->addChild('label')
-                ->addChild('input')->setProp('type', 'radio')
-                ->setName($name)
+                ->addChild('input')->setProp('type', 'checkbox')
+                ->setName("{$name}___{$index}")
                 ->setProp('value', $option['value'])
                 ->setProp('checked', $option['checked'])
                 ->insertAfter()->setInnerHTML($option['caption'])

@@ -7,7 +7,7 @@
  * Redistributions of files MUST retain the above copyright notice.
  */
 
-namespace Dida\Form\Exceptions;
+namespace Dida\Form;
 
 class FormException extends \Exception
 {
@@ -18,7 +18,7 @@ class FormException extends \Exception
 
     const INVALID_METHOD = 1001;
 
-    const TYPE_NOT_FOUND = 1002;
+    const CONTROL_TYPE_NOT_FOUND = 1002;
 
 
 

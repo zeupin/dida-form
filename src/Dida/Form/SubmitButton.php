@@ -9,7 +9,7 @@
 
 namespace Dida\Form;
 
-class Text extends FormControl
+class SubmitButton extends FormControl
 {
     const VERSION = '20171120';
 
@@ -19,29 +19,18 @@ class Text extends FormControl
 
     protected function newCaptionZone()
     {
-        $this->captionZone->setTag('label');
     }
 
 
     protected function newInputZone()
     {
-        $this->inputZone->setTag('input', 'type="text"');
-    }
-
-
-    protected function beforeBuild()
-    {
-        if (isset($this->data)) {
-            $value = $this->data;
-            $this->refInputZone()->setProp('value', htmlspecialchars($value));
-        }
+        $this->inputZone->setTag('button', 'type="submit"');
     }
 
 
     public function build()
     {
-        $this->beforeBuildText();
-        $this->beforeBuild();
+        $this->beforeBuildButton();
 
         return parent::build();
     }

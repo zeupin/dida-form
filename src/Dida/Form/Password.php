@@ -11,35 +11,38 @@ namespace Dida\Form;
 
 class Password extends FormControl
 {
-    const VERSION = '20171117';
+    const VERSION = '20171120';
 
 
-    public function value($value)
+    use BeforeBuildTrait;
+
+
+    protected function newCaptionZone()
     {
-        parent::value($value);
+        $this->captionZone->setTag('label');
+    }
 
-        $this->setProp('value', $value);
-        return $this;
+
+    protected function newInputZone()
+    {
+        $this->inputZone->setTag('input', 'type="password"');
+    }
+
+
+    protected function beforeBuild()
+    {
+        if (isset($this->data)) {
+            $value = $this->data;
+            $this->refInputZone()->setProp('value', htmlspecialchars($value));
+        }
     }
 
 
     public function build()
     {
-        $output = [];
+        $this->beforeBuildText();
+        $this->beforeBuild();
 
-        $name = $this->props->get('name');
-        $for = ($name) ? " for=\"{$name}\"" : '';
-
-        $required = ($this->props->get('required')) ? ' *' : '';
-
-        if ($this->label) {
-            $output[] = "<label{$for}>{$this->label}{$required}</label>";
-        }
-
-        $output[] = '<input type="password"';
-        $output[] = $this->props->build();
-        $output[] = '>';
-
-        return implode('', $output);
+        return parent::build();
     }
 }

@@ -11,20 +11,43 @@ namespace Dida\Form;
 
 class Hidden extends FormControl
 {
-    const VERSION = '20171117';
+    const VERSION = '20171120';
 
 
-    public function value($value)
+    protected function newCaptionZone()
     {
-        parent::value($value);
+    }
 
-        $this->setProp('value', $value);
-        return $this;
+
+    protected function newInputZone()
+    {
+        $this->inputZone->setTag('input', 'type="hidden"');
+    }
+
+
+    protected function beforeBuild()
+    {
+        if (isset($this->bag['name'])) {
+            $name = $this->bag['name'];
+            $this->refInputZone()->setName($name);
+        }
+
+        if (isset($this->bag['id'])) {
+            $id = $this->bag['id'];
+            $this->refInputZone()->setID($id);
+        }
+
+        if (isset($this->data)) {
+            $value = $this->data;
+            $this->refInputZone()->setProp('value', htmlspecialchars($value));
+        }
     }
 
 
     public function build()
     {
-        return '<input type="hidden"' . $this->props->build() . '>';
+        $this->beforeBuild();
+
+        return parent::build();
     }
 }

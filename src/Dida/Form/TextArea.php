@@ -11,63 +11,50 @@ namespace Dida\Form;
 
 class TextArea extends FormControl
 {
-    const VERSION = '20171118';
+    const VERSION = '20171120';
 
 
-    public function setTextValue($text)
+    use BeforeBuildTrait;
+
+
+    protected function newCaptionZone()
     {
-        $this->value = nl2br($text);
+        $this->captionZone->setTag('label');
+    }
+
+
+    protected function newInputZone()
+    {
+        $this->inputZone->setTag('textarea');
+    }
+
+
+    public function setRowsAndCols($rows = null, $cols = null)
+    {
+        $this->bag['rows'] = $rows;
+        $this->bag['cols'] = $cols;
         return $this;
     }
 
 
-    public function setParagraphText($text)
+    protected function beforeBuild()
     {
-        $text = str_replace("\r\n", "\n", $text);
-        $lines = explode("\n", $text);
-        foreach ($lines as $i => $line) {
-            $lines[$i] = "<p>{$line}</p>";
+        $rows = (isset($this->bag['rows'])) ? $this->bag['rows'] : 6;
+        $cols = (isset($this->bag['cols'])) ? $this->bag['cols'] : 40;
+        $this->refInputZone()->setProp('cols', $cols)->setProp('rows', $rows);
+
+        if (isset($this->data)) {
+            $value = $this->data;
+            $this->refInputZone()->setInnerHTML(htmlspecialchars($value));
         }
-        $this->value = implode('', $lines);
-        return $this;
-    }
-
-
-    public function cols($cols)
-    {
-        $this->setProp('cols', $cols);
-        return $this;
-    }
-
-
-    public function rows($rows)
-    {
-        $this->setProp('rows', $rows);
-        return $this;
     }
 
 
     public function build()
     {
-        $output = [];
+        $this->beforeBuildText();
+        $this->beforeBuild();
 
-        $name = $this->props->get('name');
-        $for = ($name) ? " for=\"{$name}\"" : '';
-
-        $required = ($this->props->get('required')) ? ' *' : '';
-
-        if ($this->label) {
-            $output[] = "<label{$for}>{$this->label}{$required}</label>";
-        }
-
-        $output[] = '<textarea';
-        $output[] = $this->props->build();
-        $output[] = '>';
-
-        $output[] = htmlspecialchars($this->value);
-
-        $output[] = '</textarea>';
-
-        return implode('', $output);
+        return parent::build();
     }
 }
