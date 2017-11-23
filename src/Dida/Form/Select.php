@@ -11,7 +11,7 @@ namespace Dida\Form;
 
 class Select extends FormControl
 {
-    const VERSION = '20171120';
+    const VERSION = '20171123';
 
 
     use \Dida\Form\OptionSetTrait;
@@ -34,6 +34,8 @@ class Select extends FormControl
 
     protected function beforeBuild()
     {
+        $this->options->check($this->data, OptionSet::CHECK_VALUE_OR_CAPTION);
+
         $options = $this->options->getAll();
 
         foreach ($options as $option) {

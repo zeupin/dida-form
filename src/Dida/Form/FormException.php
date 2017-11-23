@@ -11,7 +11,7 @@ namespace Dida\Form;
 
 class FormException extends \Exception
 {
-    const VERSION = '20171117';
+    const VERSION = '20171123';
 
 
 
@@ -23,8 +23,6 @@ class FormException extends \Exception
 
 
 
-    const INVALID_PROPERTY_NAME = 2001;
-
-    const INVALID_PROPERTY_VALUE = 2002;
+    const DATA_TYPE_ERROR = 2001;
 
 }

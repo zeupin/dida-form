@@ -40,7 +40,7 @@ class CheckboxGroup extends FormControl
             $this->refCaptionZone()->addChild()->setInnerHTML(' *');
         }
 
-        $this->check($this->data);
+        $this->options->check($this->data, OptionSet::CHECK_VALUE_OR_CAPTION);
 
         $options = $this->options->getAll();
 
@@ -52,7 +52,7 @@ class CheckboxGroup extends FormControl
                 ->setName("{$name}___{$index}")
                 ->setProp('value', $option['value'])
                 ->setProp('checked', $option['checked'])
-                ->insertAfter()->setInnerHTML($option['caption'])
+                ->addAfter()->setInnerHTML($option['caption'])
             ;
         }
     }

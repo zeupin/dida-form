@@ -11,9 +11,11 @@ namespace Dida\Form;
 
 class RadioGroup extends FormControl
 {
-    const VERSION = '20171120';
+    const VERSION = '20171123';
 
-    use \Dida\Form\OptionSetTrait;
+
+    use OptionSetTrait;
+
 
     use BeforeBuildTrait;
 
@@ -42,7 +44,7 @@ class RadioGroup extends FormControl
         }
 
         if (is_scalar($this->data)) {
-            $this->options->check([$this->data]);
+            $this->options->check($this->data);
         }
 
         $options = $this->options->getAll();
@@ -55,7 +57,7 @@ class RadioGroup extends FormControl
                 ->setName($name)
                 ->setProp('value', $option['value'])
                 ->setProp('checked', $option['checked'])
-                ->insertAfter()->setInnerHTML($option['caption'])
+                ->addAfter()->setInnerHTML($option['caption'])
             ;
         }
     }
